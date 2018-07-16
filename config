@@ -51,6 +51,24 @@ bindsym $mod+a exec atom
 bindsym --release Print exec gnome-screenshot --interactive
 bindsym $mod+Control+l exec i3lock --color "#2f343f"
 
+set $Locker i3lock --color "#2f343f" && sleep 1
+
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id $Locker, mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+    bindsym s exec --no-startup-id $Locker && systemctl suspend, mode "default"
+    bindsym h exec --no-startup-id $Locker && systemctl hibernate, mode "default"
+    bindsym r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id systemctl poweroff -i, mode "default"  
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+End mode "$mode_system"
+
  
 # multimedia keys
 bindsym XF86AudioPlay "exec playerctl play-pause"
@@ -214,14 +232,14 @@ for_window [class="Evince"] focus
 assign [class="Vlc"] $workspace7
 for_window [class="Vlc"] focus
 
-assign [class="stremio"] $workspace7
-for_window [class="stremio"] focus
+assign [class="Stremio"] $workspace7
+for_window [class="Stremio"] focus
 
 assign [class="Cutegram"] $workspace8
 for_window [class="Cutegram"] focus
 
 assign [class="Franz"] $workspace8
-for_window [class="Franz"] focus
+#for_window [class="Franz"] focus
 
 
 #assign [class=""] $workspace9
@@ -236,6 +254,8 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+# shutdown PC
+bindsym $mod+Ctrl+p exec shutdown -h now
  
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -288,21 +308,23 @@ bar {
 }
  
 #Aplicações Iniciadas junto com o sistema
-exec /home/dsambugaro/Appimage/pcloud %U &
 exec psyncgui &
-exec --no-startup-id /home/dsambugaro/Appimage/Nextcloud.AppImage &
 #exec --no-startup-id
+exec --no-startup-id numlockx on
+exec /home/dsambugaro/Appimage/pcloud
 exec --no-startup-id nitrogen --restore
 exec --no-startup-id compton -f &
 exec --no-startup-id nm-applet &
-exec --no-startup-id franz-bin &
+exec --no-startup-id franz &
 #exec --no-startup-id conky --pause 5
 #exec --no-startup-id mpd
+exec xfce4-clipman &
+exec dunst &
 
 #configuração touchpad
 exec_always xinput set-prop 13 316 0, 0, 0, 0, 1, 3, 2
 exec_always xinput set-prop 13 315 0, 0, 0, 0, 1, 3, 2
-exec_always xinput set-prop 12 298 0, 0, 0, 0, 1, 3, 2
+exec_always xinput set-prop 12 299 0, 0, 0, 0, 1, 3, 2
 exec_always xinput set-prop 12 297 0, 0, 0, 0, 1, 3, 2
 exec_always xinput set-prop 13 311 1, 1
 exec_always xinput set-prop 12 293 1, 1
@@ -310,8 +332,11 @@ exec_always xinput set-prop 12 292 1, 1
 bindsym $mod+F7 exec xinput set-prop 12 295 1
 bindsym $mod+F8 exec xinput set-prop 12 295 0
 
+#configuração de tela
+exec_always xrandr --output HDMI1 --auto --right-of eDP1
+
  
-#Aplições abertar em modo Floating
+#Aplições abertas em modo Floating
 for_window [class="Nitrogen"] floating enable sticky enable border normal
  
 #Volume Control
