@@ -1,1 +1,1 @@
-# Config_Files_i3
+# My i3wm's configuration files
